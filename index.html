@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#c6c6cb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="주짓수 일지">
+  <title>주짓수 일지</title>
+  <link rel="icon" type="image/png" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <section id="view-calendar" class="view active">
+    <header class="card lime hero">
+      <div class="dday-row">
+        <div class="dday">
+          <span class="dday-num" id="dday"></span>
+          <small class="dday-sub"><b class="nick" id="nick"></b><b class="oss">Oss</b> <span id="dday-sub"></span></small>
+        </div>
+        <img class="momonga" src="momonga.png" alt="" width="341" height="271">
+      </div>
+      <div class="belt-row">
+        <span class="belt" id="belt-view" aria-hidden="true"></span>
+        <span class="belt-label" id="belt-label"></span>
+        <button type="button" class="settings-btn" id="open-settings" aria-label="설정" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+      <div class="hero-stats" id="summary"></div>
+    </header>
+
+      <div class="card pink tab calendar">
+        <div class="cal-head">
+          <div class="month-title">
+            <small id="year-label"></small>
+            <h2 id="month-label"></h2>
+          </div>
+          <button type="button" id="prev" class="round" aria-label="이전 달">‹</button>
+          <button type="button" id="next" class="round" aria-label="다음 달">›</button>
+          <button type="button" id="today" class="pill-btn">오늘</button>
+        </div>
+        <div class="weekdays">
+          <span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span>
+        </div>
+        <div class="grid" id="grid"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </section>
+
+    <section id="view-day" class="view">
+      <div class="day-top">
+        <button type="button" id="day-back" class="round" aria-label="달력으로 돌아가기">‹</button>
+        <span>하루 기록</span>
+      </div>
+
+      <div class="card mint tab" id="editor">
+        <div class="editor-head">
+          <span class="badge" id="day-badge"></span>
+          <div>
+            <h2 id="day-label"></h2>
+            <span id="save-state" class="save-state"></span>
+          </div>
+        </div>
+        <h3>수업</h3>
+        <div class="chips" id="sessions"></div>
+        <h3>스파링</h3>
+        <div class="stepper">
+          <button type="button" id="rolls-minus" class="round" aria-label="스파링 한 번 빼기">−</button>
+          <span class="stepper-value"><b id="rolls">0</b>회</span>
+          <button type="button" id="rolls-plus" class="round" aria-label="스파링 한 번 더하기">+</button>
+        </div>
+      </div>
+
+      <div class="card sky tab">
+        <h3 class="first">오늘 배운 기술 <span id="tech-count"></span></h3>
+        <div class="chips" id="selected-techs"></div>
+        <input id="tech-search" class="input" type="search" placeholder="기술 검색 (예: 암바, 니컷, ㅅㅇ)" autocomplete="off">
+        <div class="cats" id="cats"></div>
+        <div class="recent-techs" id="recent-techs"></div>
+        <ul class="tech-list" id="tech-list"></ul>
+      </div>
+
+      <div class="card pink tab">
+        <h3 class="first">사진</h3>
+        <div class="photos" id="photos"></div>
+        <label class="pill-btn" for="photo-input">＋ 사진 추가</label>
+        <input id="photo-input" type="file" accept="image/*" multiple hidden>
+        <p id="photo-state" class="backup-state" aria-live="polite"></p>
+
+        <h3>참고 영상</h3>
+        <ul class="video-list" id="videos"></ul>
+        <a id="yt-search" class="yt-btn" href="https://www.youtube.com/results?search_query=%EC%A3%BC%EC%A7%93%EC%88%98" target="_blank" rel="noopener noreferrer">▶ 유튜브에서 기술 영상 찾기</a>
+        <form class="video-form" id="video-form">
+          <input id="video-url" class="input" type="url" inputmode="url" placeholder="찾은 영상 링크 붙여넣기" autocomplete="off">
+          <input id="video-label" class="input" type="text" placeholder="영상 이름 (선택, 예: 니컷 디테일)" maxlength="40" autocomplete="off">
+          <button type="submit" class="pill-btn">영상 첨부</button>
+        </form>
+        <p id="video-state" class="backup-state" aria-live="polite"></p>
+      </div>
+
+      <div class="card lime tab">
+        <h3 class="first">메모</h3>
+        <textarea id="memo" class="input" rows="6" placeholder="오늘 배운 디테일, 스파링에서 느낀 점, 다음에 해볼 것…"></textarea>
+        <button type="button" id="clear-day" class="text-btn">이 날 기록 지우기</button>
+      </div>
+
+      <div class="done-bar">
+        <button type="button" id="done-day" class="done-btn">기록 완료</button>
+      </div>
+    </section>
+
+    <section id="view-diary" class="view">
+      <div class="card mint tab">
+        <h3 class="first">일기</h3>
+        <input id="diary-search" class="input" type="search" placeholder="메모·기술·수업 검색" autocomplete="off">
+      </div>
+      <div id="diary-list" class="diary-list"></div>
+    </section>
+
+    <section id="view-stats" class="view">
+      <div id="stats"></div>
+      <div class="card pink tab foot">
+        <h3 class="first">백업</h3>
+        <p>기록은 이 기기의 브라우저에 저장돼요. 가끔 백업해 두세요.</p>
+        <div class="foot-actions">
+          <button type="button" id="export" class="pill-btn">내보내기</button>
+          <label class="pill-btn">불러오기<input id="import" type="file" accept="application/json,.json" hidden></label>
+        </div>
+        <p id="backup-state" class="backup-state" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <div class="lightbox" id="lightbox" hidden>
+      <img id="lightbox-img" alt="첨부한 사진">
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <div class="sheet-backdrop" id="settings-sheet" hidden>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="sheet-head">
+          <h2 id="settings-title">설정</h2>
+          <button type="button" class="pill-btn" id="close-settings">완료</button>
+        </div>
+        <p class="sheet-hint" id="settings-hint" hidden>처음 오셨네요! 닉네임과 주짓수 시작일을 정해 주세요.</p>
+        <label class="setting">닉네임
+          <input id="nickname" class="text-input" type="text" maxlength="12" placeholder="예: 아람" autocomplete="nickname">
+        </label>
+        <label class="setting">주짓수 시작일
+          <input id="start-date" class="date-input" type="date">
+        </label>
+        <div class="setting-block">
+          <span class="setting-label">벨트</span>
+          <div class="bp-row" id="bp-colors"></div>
+          <div class="bp-row" id="bp-stripes"></div>
+        </div>
+        <label class="setting">수업 1회 시간
+          <span><input id="class-minutes" type="number" min="10" max="300" step="10" inputmode="numeric">분</span>
+        </label>
+      </div>
+    </div>
+
+    <nav class="tabs">
+      <button type="button" data-view="calendar" class="active">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+        <span>달력</span>
+      </button>
+      <button type="button" data-view="diary">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h10a2.5 2.5 0 0 1 2.5 2.5v14.5H8.5A2.5 2.5 0 0 1 6 18V3.5Z"/><path d="M6 18a2.5 2.5 0 0 1 2.5-2.5h10M10 8h5"/></svg>
+        <span>일기</span>
+      </button>
+      <button type="button" data-view="stats">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>
+        <span>통계</span>
+      </button>
+    </nav>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
