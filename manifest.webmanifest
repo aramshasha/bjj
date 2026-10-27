@@ -1,6 +1,6 @@
 {
-  "name": "주짓수 일지",
-  "short_name": "주짓수 일지",
+  "name": "롤클럽주짓수",
+  "short_name": "롤클럽주짓수",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
