@@ -976,7 +976,6 @@ function renderBeltPicker() {
 function openSettings() {
   renderBeltPicker();
   $('start-date').value = data.startDate;
-  $('class-minutes').value = data.classMinutes;
   $('nickname').value = data.nickname;
   clearTimeout(sheetCloseTimer);
   $('settings-sheet').classList.remove('closing');
@@ -1052,14 +1051,11 @@ $('start-date').addEventListener('change', (ev) => {
   renderDday();
 });
 
-$('class-minutes').value = data.classMinutes;
-$('class-minutes').addEventListener('change', (ev) => {
-  const n = Math.round(Number(ev.target.value));
-  if (n > 0) data.classMinutes = n;
-  ev.target.value = data.classMinutes;
-  persist({ settings: true });
-  renderSummary();
-  renderStats();
+// 그림 파일이 없거나 못 불러오면 깨진 그림 대신 아예 숨긴다
+document.querySelectorAll('img').forEach((img) => {
+  // 스크립트보다 먼저 실패한 경우도 잡는다
+  if (img.complete && !img.naturalWidth) img.hidden = true;
+  img.addEventListener('error', () => { img.hidden = true; });
 });
 
 /* ---------- 탭 ---------- */
@@ -1142,7 +1138,6 @@ function renderAll() {
   renderSummary();
   renderCalendar();
   renderEditor();
-  $('class-minutes').value = data.classMinutes;
   if (state.view === 'diary') renderDiary();
   if (state.view === 'stats') renderStats();
 }
