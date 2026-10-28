@@ -913,7 +913,7 @@ function renderStats() {
   // 맨 위는 누적 수련 시간을 크게, 나머지는 바둑판으로. 숫자는 크게, 단위는 작게.
   const tile = (label, n, unit, cls) => `<div class="card ${cls}"><b>${n}<em>${unit}</em></b><span>${esc(label)}</span></div>`;
   const tiles = [
-    tile('누적 수련 시간', hours, '시간', 'lime wide'),
+    tile('누적 수련 시간', hours, '시간', 'lime wide').replace('</div>', `<img class="stat-buddy" src="${BUDDY_SRC}" alt="" width="282" height="282"></div>`),
     ...[
       ...[...sessionTotals].map(([s, n]) => [s, n, '번']),
       ['배운 기술 종류', counts.size, '개'],
@@ -941,6 +941,9 @@ function renderStats() {
     ${weekdayChart()}
     <div class="card mint tab">${blocks || '<p class="empty-state">기술을 체크하면 여기에서 많이 연습한 기술을 볼 수 있어요.</p>'}</div>`;
 }
+
+// 통계 맨 위 카드의 모몽가 (투명 배경 움직이는 GIF)
+const BUDDY_SRC = 'buddy.gif';
 
 /* ---------- 그래프 (SVG) ---------- */
 

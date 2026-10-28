@@ -1461,3 +1461,23 @@ html { scrollbar-gutter: stable; }
 /* 팝업 한 줄 정보: 넘치면 다음 줄로 (가운데 정렬) */
 .ds-line { flex-wrap: wrap; justify-content: center; overflow: visible; row-gap: 6px; }
 .ds-line > :first-child, .ds-line > :last-child { margin: 0; }
+
+/* ---------- 탭 전환 덜컹거림 수정 ----------
+   옆으로 밀려 들어오는 동안 화면 폭을 넘으면 아이폰이 화면을 잠깐 축소한다.
+   가로 넘침을 잘라 내고, 전환은 제자리에서 살짝 떠오르는 페이드로 바꾼다. */
+html, body { overflow-x: hidden; }
+.app { overflow-x: clip; }
+@keyframes view-in-right { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: none; } }
+@keyframes view-in-left { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: none; } }
+.view.enter-right, .view.enter-left { animation-duration: 0.24s; will-change: opacity, transform; }
+
+/* 통계 맨 위 카드 오른쪽 빈자리에 모몽가 */
+.stat-grid .wide { position: relative; overflow: hidden; }
+.stat-buddy {
+  position: absolute;
+  right: 6px;
+  bottom: -8px;
+  width: 118px;
+  height: auto;
+  pointer-events: none;
+}
