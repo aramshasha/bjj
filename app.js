@@ -1,6 +1,6 @@
 const STORAGE_KEY = 'bjj-journal-v1';
 const DEFAULT_SESSIONS = ['7시부', '8시부'];
-const CATEGORIES = ['스윕', '패스', '서브미션', '이스케이프', '테이크다운', '포지션'];
+const CATEGORIES = ['스윕', '패스', '서브미션', '이스케이프', '테이크다운', '포지션', '드릴'];
 
 // [이름, 영문/별칭] — 검색은 둘 다 본다
 const LIBRARY = {
@@ -44,9 +44,24 @@ const LIBRARY = {
     ['세오이나게', 'Seoi nage'], ['하라이고시', 'Harai goshi'], ['스냅 다운', 'Snap down'],
     ['가드 풀', 'Guard pull'], ['암 드래그', 'Arm drag'],
   ],
+  드릴: [
+    ['새우빼기 드릴', 'Shrimping'], ['브릿지 드릴', 'Bridging / Upa'], ['테크니컬 스탠드업', 'Technical stand-up'],
+    ['앞구르기', 'Forward roll'], ['뒤구르기', 'Backward roll'], ['어깨 구르기', 'Shoulder roll'],
+    ['힙 스위치', 'Hip switch'], ['가드 리커버리 드릴', 'Guard recovery'], ['스프롤 드릴', 'Sprawl'],
+    ['고릴라 워크', 'Gorilla walk'], ['우치코미', 'Uchikomi / Entry reps'], ['패스 드릴', 'Passing drill'],
+    ['기술 반복 드릴', 'Technique reps'], ['플로우 롤', 'Flow roll'], ['포지셔널 스파링', 'Positional sparring'],
+    // 가드 세팅: 각 가드 자세를 잡는 연습
+    ['클로즈드 가드 세팅', 'Closed guard setup'], ['하프 가드 세팅', 'Half guard setup'],
+    ['Z가드 (니실드) 세팅', 'Z-guard / Knee shield'], ['딥하프 세팅', 'Deep half setup'],
+    ['버터플라이 가드 세팅', 'Butterfly guard setup'], ['데라히바 가드 세팅', 'De La Riva setup'],
+    ['리버스 데라히바 세팅', 'Reverse De La Riva setup'], ['스파이더 가드 세팅', 'Spider guard setup'],
+    ['라쏘 가드 세팅', 'Lasso guard setup'], ['X가드 세팅', 'X-guard setup'],
+    ['싱글레그 X 세팅', 'Single leg X / Ashi setup'], ['50/50 가드 세팅', '50/50 guard setup'],
+    ['K가드 세팅', 'K-guard setup'], ['웜 가드 세팅', 'Worm guard setup'],
+  ],
+  // 포지션은 위에서 누르는 자세만. 가드 자세는 드릴의 "세팅"으로 기록한다.
   포지션: [
-    ['클로즈드 가드', 'Closed guard'], ['하프 가드', 'Half guard'], ['버터플라이 가드', 'Butterfly guard'],
-    ['데라히바 가드', 'De La Riva guard'], ['가드 리텐션', 'Guard retention'], ['마운트 컨트롤', 'Mount'],
+    ['마운트 컨트롤', 'Mount'],
     ['사이드 컨트롤', 'Side control'], ['니 온 벨리', 'Knee on belly'], ['백 컨트롤', 'Back control / Seatbelt'],
     ['백 테이크', 'Back take'], ['크루시픽스', 'Crucifix'], ['노스사우스', 'North-south'],
     ['터틀', 'Turtle'],
@@ -123,9 +138,26 @@ function matches(tech, query) {
 
 /* ---------- 저장소 ---------- */
 
+// 예전에 포지션에 있던 가드 항목은 드릴의 같은 항목으로 옮겨 기록을 지킨다
+const TECH_RENAMES = {
+  '포지션:클로즈드 가드': '드릴:클로즈드 가드 세팅',
+  '포지션:하프 가드': '드릴:하프 가드 세팅',
+  '포지션:버터플라이 가드': '드릴:버터플라이 가드 세팅',
+  '포지션:데라히바 가드': '드릴:데라히바 가드 세팅',
+  '포지션:가드 리텐션': '드릴:가드 리커버리 드릴',
+};
+
+function migrateEntries(entries) {
+  for (const e of Object.values(entries)) {
+    if (!Array.isArray(e?.techs)) continue;
+    e.techs = [...new Set(e.techs.map((id) => TECH_RENAMES[id] || id))];
+  }
+  return entries;
+}
+
 function normalize(raw) {
   return {
-    entries: raw && typeof raw.entries === 'object' ? raw.entries : {},
+    entries: raw && typeof raw.entries === 'object' ? migrateEntries(raw.entries) : {},
     custom: Array.isArray(raw?.custom) ? raw.custom : [],
     sessions: Array.isArray(raw?.sessions) && raw.sessions.length ? raw.sessions : [...DEFAULT_SESSIONS],
     startDate: typeof raw?.startDate === 'string' ? raw.startDate : '',
@@ -410,7 +442,6 @@ function renderEditor() {
   const key = state.selected;
   const e = getEntry(key);
   const d = fromKey(key);
-  $('day-badge').innerHTML = `<b>${d.getDate()}</b><small>${WEEK[d.getDay()]}</small>`;
   const holiday = holidayName(key);
   $('day-label').textContent = (key === today ? `오늘 · ${d.getMonth() + 1}월 ${d.getDate()}일` : fullLabel(key)) + (holiday ? ` · ${holiday}` : '');
   // 입력 중인 메모는 동기화로 덮어쓰지 않는다

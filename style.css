@@ -1552,3 +1552,32 @@ html, body { overflow-x: hidden; }
   font-weight: 700;
 }
 #day-sheet .sheet { overflow-y: auto; }
+
+/* 기록 화면 첫 카드: 파란색 20% */
+.card.day-main { background: rgba(47, 109, 246, 0.2); }
+.card.day-main .chip:not(.on) { background: rgba(255, 255, 255, 0.6); }
+
+/* ---------- 기록 화면 첫 카드 다듬기 ---------- */
+/* 날짜 아래 공백 줄이기: "저장됨" 표시는 날짜 옆에 작게 붙인다 */
+.day-main .editor-head > div { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.day-main .save-state { min-height: 0; }
+.day-main h3 { margin: 14px 0 8px; color: var(--lime); }
+
+/* 스파링 −/+ : 반투명 파란 버튼 */
+.day-main .stepper .round {
+  background: rgba(47, 109, 246, 0.16);
+  color: var(--lime);
+}
+.day-main .stepper .round:active { background: rgba(47, 109, 246, 0.28); }
+
+/* 7시부·8시부: 테두리 없는 반투명 버튼, 고르면 수업 색으로 채움 */
+.day-main .chip {
+  border: 0;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--lime);
+}
+.day-main .chip.on { background: var(--c); color: var(--ci, var(--white)) !important; }
+.day-main .chip.add { background: transparent; border: 1px dashed rgba(47, 109, 246, 0.5); color: rgba(47, 109, 246, 0.8); }
+
+/* 맨 위 뒤로 가기 버튼: 파란색 */
+#day-back { background: var(--lime); color: var(--white); }
