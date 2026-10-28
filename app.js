@@ -780,7 +780,10 @@ $('clear-day').addEventListener('click', () => {
 // 팝업 아래쪽: 메모·사진·영상 (수업·스파링·기술은 날짜 아래 한 줄에 따로 보인다)
 function entryBodyHtml(e) {
   return `${e.memo.trim() ? `<p class="memo-text">${esc(e.memo)}</p>` : ''}
-      ${(e.photos || []).length ? `<div class="photos small">${e.photos.map((p) => `<figure class="photo"><img src="${esc(photoSrc(p))}" alt="" loading="lazy" data-zoom></figure>`).join('')}</div>` : ''}
+      ${(e.photos || []).length ? `<div class="ds-photos">
+        <div class="ds-track">${e.photos.map((p) => `<img src="${esc(photoSrc(p))}" alt="" data-zoom>`).join('')}</div>
+        ${e.photos.length > 1 ? `<span class="ds-count">1 / ${e.photos.length}</span>` : ''}
+      </div>` : ''}
       ${(e.videos || []).length ? `<ul class="video-list">${e.videos.map((v) => `<li><a href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="play">▶</span><span class="v-text"><b>${esc(v.label)}</b><small>${esc(videoLabel(v.url))}</small></span></a></li>`).join('')}</ul>` : ''}`;
 }
 
@@ -812,6 +815,16 @@ $('ds-close').addEventListener('click', () => closeSheet($('day-sheet')));
 $('day-sheet').addEventListener('click', (ev) => {
   if (ev.target === $('day-sheet') || ev.target.classList.contains('sheet-wrap')) closeSheet($('day-sheet'));
 });
+
+// 팝업 사진을 옆으로 넘기면 몇 번째 사진인지 표시
+document.addEventListener('scroll', (ev) => {
+  const track = ev.target;
+  if (!(track instanceof Element) || !track.classList.contains('ds-track')) return;
+  const count = track.parentElement.querySelector('.ds-count');
+  if (!count) return;
+  const i = Math.round(track.scrollLeft / track.clientWidth);
+  count.textContent = `${i + 1} / ${track.children.length}`;
+}, true);
 
 // 사진을 누르면 크게 보기 (일기 목록·팝업 공통)
 document.addEventListener('click', (ev) => {
@@ -866,6 +879,7 @@ function renderDiary() {
     lastMonth = month;
     const names = e.techs.map((id) => map.get(id)?.name).filter(Boolean);
     const memoLine = e.memo.trim().split('\n')[0];
+    const photos = e.photos || [];
     // 한 줄 정보: 스파링·사진·영상 → 기술 (들은 수업은 앞의 띠 아이콘 색으로 보인다)
     const tags = [
       e.rolls ? `<span class="pill info-pill">스파링 <b>${e.rolls}</b>회</span>` : '',
@@ -876,10 +890,13 @@ function renderDiary() {
     const holiday = holidayName(k);
     return `${monthHead}<div class="diary-row">
       <div class="dr-date${d.getDay() === 0 || holiday ? ' red' : ''}"><b>${d.getDate()}</b><span>${WEEK[d.getDay()]}</span></div>
-      <article class="diary-card" data-open="${k}" role="button" tabindex="0" aria-label="${fullLabel(k)} 기록 보기">
-        <span class="dc-icon${e.sessions.length ? ' on' : ''}" style="--fill:${circleFill(e)}">${BELT_ICON}</span>
-        ${memoLine ? `<b class="dc-title">${esc(memoLine)}</b>` : ''}
-        <div class="pills">${tags}</div>
+      <article class="diary-card${photos.length ? ' has-photo' : ''}" data-open="${k}" role="button" tabindex="0" aria-label="${fullLabel(k)} 기록 보기">
+        ${photos.length ? `<div class="dc-photo"><img src="${esc(photoSrc(photos[0]))}" alt="" loading="lazy">${photos.length > 1 ? `<span class="dc-count">+${photos.length - 1}</span>` : ''}</div>` : ''}
+        <div class="dc-row">
+          <span class="dc-icon${e.sessions.length ? ' on' : ''}" style="--fill:${circleFill(e)}">${BELT_ICON}</span>
+          ${memoLine ? `<b class="dc-title">${esc(memoLine)}</b>` : ''}
+          <div class="pills">${tags}</div>
+        </div>
       </article>
     </div>`;
   }).join('');
