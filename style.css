@@ -186,7 +186,7 @@ h1 {
 .setting input {
   width: 76px;
   min-height: 38px;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   border-radius: 999px;
   background: transparent;
   text-align: center;
@@ -202,7 +202,7 @@ h1 {
   justify-content: center;
   min-height: 38px;
   padding: 0 18px;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   border-radius: 999px;
   background: transparent;
   font-size: 14px;
@@ -326,7 +326,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
 
 /* 수업 없이 메모·기술만 */
 .day.note .num {
-  box-shadow: inset 0 0 0 1.5px var(--muted);
+  box-shadow: inset 0 0 0 1px var(--muted);
   border: 0;
   background: transparent;
 }
@@ -371,7 +371,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
   border-radius: 50%;
 }
 
-.dot.note { box-shadow: inset 0 0 0 1.5px var(--muted); }
+.dot.note { box-shadow: inset 0 0 0 1px var(--muted); }
 
 /* ---------- 하루 기록 ---------- */
 
@@ -394,7 +394,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
   gap: 6px;
   min-height: 40px;
   padding: 0 16px;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   border-radius: 999px;
   background: transparent;
   font-size: 15px;
@@ -444,7 +444,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
   flex: none;
   min-height: 34px;
   padding: 0 14px;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   border-radius: 999px;
   background: transparent;
   font-size: 13px;
@@ -481,7 +481,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
   height: 24px;
   margin: 0;
   border-radius: 50%;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   display: grid;
   place-content: center;
 }
@@ -514,7 +514,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
 
 .add-row select {
   min-height: 36px;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   border-radius: 999px;
   background: transparent;
   padding: 0 10px;
@@ -639,7 +639,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
   height: 22px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -797,7 +797,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
   height: 22px;
   border-radius: 4px;
   background: var(--belt);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85);
 }
 .belt-bar {
   position: absolute;
@@ -832,7 +832,7 @@ textarea.input { resize: vertical; min-height: 140px; display: block; }
 .setting + .setting { margin-top: 10px; }
 .setting select {
   min-height: 38px;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   border-radius: 999px;
   background: transparent;
   padding: 0 12px;
@@ -907,7 +907,7 @@ body.in-day .tabs { display: none; }
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .belt-picker {
@@ -926,7 +926,7 @@ body.in-day .tabs { display: none; }
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   background: var(--belt);
 }
 
@@ -936,7 +936,7 @@ body.in-day .tabs { display: none; }
   min-height: 34px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   background: transparent;
   color: var(--white);
   font-size: 13px;
@@ -973,7 +973,7 @@ body.in-day .tabs { display: none; }
   height: 24px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 1.6;
   stroke-linecap: round;
 }
 
@@ -1014,7 +1014,7 @@ body.sheet-open { overflow: hidden; }
 
 .date-input {
   min-height: 38px;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   border-radius: 999px;
   background: transparent;
   padding: 0 12px;
@@ -1063,7 +1063,7 @@ body.sheet-open { overflow: hidden; }
 .text-input {
   width: 150px;
   min-height: 38px;
-  border: 1.5px solid var(--navy);
+  border: 1px solid var(--navy);
   border-radius: 999px;
   background: transparent;
   padding: 0 14px;
@@ -1079,3 +1079,127 @@ body.sheet-open { overflow: hidden; }
   font-weight: 600;
 }
 .sheet-hint[hidden] { display: none; }
+
+/* ---------- 설정 창: 반투명 유리 느낌 ---------- */
+.sheet-backdrop {
+  background: rgba(17, 17, 19, 0.28);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.sheet-wrap {
+  position: relative;
+  width: min(440px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 92%;
+}
+
+.sheet {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-bottom: 0;
+  box-shadow: 0 -10px 40px rgba(17, 17, 19, 0.18);
+}
+
+/* 처음 등록할 때 유리창 위에 떠 있는 캐릭터 (투명도 없이 그대로) */
+.sheet-mascot {
+  position: relative;
+  z-index: 1;
+  width: 132px;
+  height: auto;
+  margin-bottom: -26px;
+  opacity: 1;
+  filter: drop-shadow(0 8px 16px rgba(17, 17, 19, 0.2));
+  pointer-events: none;
+}
+
+.sheet-mascot[hidden] { display: none; }
+
+/* 닉네임·시작일: 라벨 아래에 넓은 입력칸 */
+.setting.stack {
+  display: grid;
+  gap: 8px;
+}
+
+.setting.stack .text-input,
+.setting.stack .date-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 18px;
+  border: 1px solid rgba(17, 17, 19, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  text-align: left;
+  font-size: 17px;
+  font-weight: 600;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.setting.stack .date-input { display: flex; align-items: center; }
+.setting.stack .date-input::-webkit-date-and-time-value { text-align: left; }
+.setting.stack input:focus { outline: none; border-color: var(--lime); background: var(--white); }
+.sheet-hint { background: rgba(47, 109, 246, 0.14); }
+
+.setting.stack { justify-content: stretch; align-items: stretch; }
+.setting.stack input { min-width: 0; box-sizing: border-box; }
+
+/* 통계 타일: 큰 숫자 + 작은 단위 */
+.stat-grid .wide { grid-column: 1 / -1; }
+.stat-grid .wide b { font-size: 64px; }
+.stat-grid b em {
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-left: 4px;
+  opacity: 0.7;
+}
+.stat-grid .wide b em { font-size: 20px; }
+
+/* 설정 창 머리: 제목 없이 완료 버튼만 오른쪽에 */
+.sheet-head { justify-content: flex-end; }
+
+/* ---------- 화면 전환 모션 ---------- */
+@keyframes view-in-right { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes view-in-left { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+.view.enter-right { animation: view-in-right 0.32s cubic-bezier(0.22, 1, 0.36, 1); }
+.view.enter-left { animation: view-in-left 0.32s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* 하단 탭: 파란 표시가 미끄러지듯 이동 */
+.tabs { --tab: 0; }
+.tab-indicator {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc((100% - 12px - 8px) / 3);
+  border-radius: 999px;
+  background: var(--lime);
+  transform: translateX(calc(var(--tab) * (100% + 4px)));
+  transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tabs button { position: relative; z-index: 1; transition: color 0.25s; }
+.tabs button.active { background: transparent; }
+
+/* ---------- 설정 창: 아래에서 올라오기 ---------- */
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes sheet-down { from { transform: none; } to { transform: translateY(100%); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+.sheet-backdrop { animation: fade-in 0.24s ease-out; }
+.sheet-backdrop .sheet-wrap { animation: sheet-up 0.36s cubic-bezier(0.22, 1, 0.36, 1); }
+.sheet-backdrop.closing { animation: fade-out 0.24s ease-in forwards; }
+.sheet-backdrop.closing .sheet-wrap { animation: sheet-down 0.24s ease-in forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .view.enter-right, .view.enter-left,
+  .sheet-backdrop, .sheet-backdrop .sheet-wrap,
+  .sheet-backdrop.closing, .sheet-backdrop.closing .sheet-wrap { animation: none; }
+  .tab-indicator { transition: none; }
+}

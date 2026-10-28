@@ -145,16 +145,17 @@
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
     <div class="sheet-backdrop" id="settings-sheet" hidden>
-      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="sheet-wrap">
+      <img class="sheet-mascot" id="sheet-mascot" src="welcome.png" alt="" width="383" height="409">
+      <div class="sheet" role="dialog" aria-modal="true" aria-label="설정">
         <div class="sheet-head">
-          <h2 id="settings-title">설정</h2>
           <button type="button" class="pill-btn" id="close-settings">완료</button>
         </div>
         <p class="sheet-hint" id="settings-hint" hidden>처음 오셨네요! 닉네임과 주짓수 시작일을 정해 주세요.</p>
-        <label class="setting">닉네임
+        <label class="setting stack">닉네임
           <input id="nickname" class="text-input" type="text" maxlength="12" placeholder="예: 아람" autocomplete="nickname">
         </label>
-        <label class="setting">주짓수 시작일
+        <label class="setting stack">주짓수 시작일
           <input id="start-date" class="date-input" type="date">
         </label>
         <div class="setting-block">
@@ -166,9 +167,11 @@
           <span><input id="class-minutes" type="number" min="10" max="300" step="10" inputmode="numeric">분</span>
         </label>
       </div>
+      </div>
     </div>
 
     <nav class="tabs">
+      <span class="tab-indicator" aria-hidden="true"></span>
       <button type="button" data-view="calendar" class="active">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
         <span>달력</span>

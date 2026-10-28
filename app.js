@@ -822,11 +822,18 @@ function renderStats() {
   const sessionTotals = new Map(data.sessions.map((s) => [s, 0]));
   for (const [, e] of entries) for (const s of e.sessions) sessionTotals.set(s, (sessionTotals.get(s) || 0) + 1);
 
+  const classes = entries.reduce((n, [, e]) => n + e.sessions.length, 0);
+  const hours = Math.round((classes * data.classMinutes) / 6) / 10;
+  // 맨 위는 누적 수련 시간을 크게, 나머지는 바둑판으로. 숫자는 크게, 단위는 작게.
+  const tile = (label, n, unit, cls) => `<div class="card ${cls}"><b>${n}<em>${unit}</em></b><span>${esc(label)}</span></div>`;
   const tiles = [
-    ...[...sessionTotals].map(([s, n]) => [s, n]),
-    ['배운 기술 종류', counts.size],
-    ['스파링 횟수', entries.reduce((n, [, e]) => n + (e.rolls || 0), 0)],
-  ].map(([label, n], i) => `<div class="card ${['lime', 'pink', 'sky', 'mint'][i % 4]}"><b>${n}</b><span>${esc(label)}</span></div>`).join('');
+    tile('누적 수련 시간', hours, '시간', 'lime wide'),
+    ...[
+      ...[...sessionTotals].map(([s, n]) => [s, n, '번']),
+      ['배운 기술 종류', counts.size, '개'],
+      ['스파링 횟수', entries.reduce((n, [, e]) => n + (e.rolls || 0), 0), '번'],
+    ].map(([label, n, unit], i) => tile(label, n, unit, ['pink', 'mint', 'mint', 'pink'][i % 4])),
+  ].join('');
 
   const blocks = CATEGORIES.map((cat) => {
     const items = [...counts].map(([id, c]) => ({ t: map.get(id), ...c }))
@@ -971,22 +978,32 @@ function openSettings() {
   $('start-date').value = data.startDate;
   $('class-minutes').value = data.classMinutes;
   $('nickname').value = data.nickname;
+  clearTimeout(sheetCloseTimer);
+  $('settings-sheet').classList.remove('closing');
   $('settings-sheet').hidden = false;
   document.body.classList.add('sheet-open');
 }
 
+let sheetCloseTimer;
 function closeSettings() {
   document.activeElement?.blur();
-  $('settings-hint').hidden = true;
-  $('settings-sheet').hidden = true;
-  document.body.classList.remove('sheet-open');
   renderSummary();
+  // 아래로 내려가는 모션이 끝난 뒤에 숨긴다
+  const sheet = $('settings-sheet');
+  sheet.classList.add('closing');
+  clearTimeout(sheetCloseTimer);
+  sheetCloseTimer = setTimeout(() => {
+    sheet.hidden = true;
+    sheet.classList.remove('closing');
+    $('settings-hint').hidden = true;
+    document.body.classList.remove('sheet-open');
+  }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 240);
 }
 
 $('open-settings').addEventListener('click', openSettings);
 $('close-settings').addEventListener('click', closeSettings);
 $('settings-sheet').addEventListener('click', (ev) => {
-  if (ev.target === $('settings-sheet')) closeSettings();
+  if (ev.target === $('settings-sheet') || ev.target.classList.contains('sheet-wrap')) closeSettings();
 });
 document.addEventListener('keydown', (ev) => {
   if (ev.key === 'Escape' && !$('settings-sheet').hidden) closeSettings();
@@ -1047,14 +1064,31 @@ $('class-minutes').addEventListener('change', (ev) => {
 
 /* ---------- 탭 ---------- */
 
+// 탭 순서대로 오른쪽/왼쪽에서 밀려 들어오고, 기록 화면은 늘 오른쪽에서 들어온다
+const VIEW_ORDER = ['calendar', 'diary', 'stats'];
+
 function showView(view) {
-  if (state.view === 'day' && view !== 'day') flushMemo();
+  const prev = state.view;
+  if (prev === 'day' && view !== 'day') flushMemo();
   state.view = view;
   document.body.classList.toggle('in-day', view === 'day');
   document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('active', b.dataset.view === view));
   document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === `view-${view}`));
+  const tabIndex = VIEW_ORDER.indexOf(view);
+  if (tabIndex >= 0) document.querySelector('.tabs').style.setProperty('--tab', tabIndex);
   if (view === 'diary') renderDiary();
   if (view === 'stats') renderStats();
+
+  if (prev !== view) {
+    let dir = 'right';
+    if (prev === 'day') dir = 'left';
+    else if (view !== 'day' && VIEW_ORDER.indexOf(view) < VIEW_ORDER.indexOf(prev)) dir = 'left';
+    const el = $(`view-${view}`);
+    el.classList.remove('enter-right', 'enter-left');
+    void el.offsetWidth; // 같은 애니메이션을 다시 시작하려면 한 번 끊어 준다
+    el.classList.add(`enter-${dir}`);
+    window.scrollTo(0, 0);
+  }
 }
 
 document.querySelector('.tabs').addEventListener('click', (ev) => {
