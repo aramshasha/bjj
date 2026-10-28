@@ -1481,3 +1481,8 @@ html, body { overflow-x: hidden; }
   height: auto;
   pointer-events: none;
 }
+.stat-buddy { width: 108px; right: 10px; bottom: -6px; }
+/* 얼굴만 잘라 낸 모몽가가 카드 아래 가장자리에서 빼꼼 올라온 것처럼 */
+.stat-buddy { width: 112px; right: 14px; bottom: 0; }
+/* 레퍼런스처럼: 전신 그림을 크게 두고 카드 오른쪽·아래로 넘치는 부분은 잘라 낸다 */
+.stat-buddy { width: 158px; right: -26px; top: 6px; bottom: auto; }

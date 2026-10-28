@@ -942,8 +942,8 @@ function renderStats() {
     <div class="card mint tab">${blocks || '<p class="empty-state">기술을 체크하면 여기에서 많이 연습한 기술을 볼 수 있어요.</p>'}</div>`;
 }
 
-// 통계 맨 위 카드의 모몽가 (투명 배경 움직이는 GIF)
-const BUDDY_SRC = 'buddy.gif';
+// 통계 맨 위 카드의 모몽가 (카드 밖으로 넘치는 부분은 잘림)
+const BUDDY_SRC = 'stat-momonga.png';
 
 /* ---------- 그래프 (SVG) ---------- */
 
