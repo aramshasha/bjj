@@ -144,6 +144,24 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
+    <div class="sheet-backdrop center" id="day-sheet" hidden>
+      <div class="sheet-wrap">
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ds-title">
+        <div class="ds-actions">
+          <button type="button" class="round icon-btn" id="ds-edit" aria-label="수정">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>
+          </button>
+          <button type="button" class="round close-x" id="ds-close" aria-label="닫기">✕</button>
+        </div>
+        <div class="detail-center">
+          <h2 id="ds-title"></h2>
+          <div class="ds-line" id="ds-pills"></div>
+        </div>
+        <div class="detail-body" id="ds-body"></div>
+      </div>
+      </div>
+    </div>
+
     <div class="sheet-backdrop" id="settings-sheet" hidden>
       <div class="sheet-wrap">
       <img class="sheet-mascot" id="sheet-mascot" src="welcome.png" alt="" width="383" height="409">

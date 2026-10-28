@@ -335,7 +335,14 @@ function circleFill(e) {
 $('grid').addEventListener('click', (ev) => {
   const btn = ev.target.closest('.day[data-key]');
   if (!btn) return;
-  openDay(btn.dataset.key);
+  const key = btn.dataset.key;
+  if (data.entries[key]) {
+    // 팝업이 뜨는 동안 달력을 다시 그리면 모션이 끊기므로, 선택 표시는 팝업이 다 열린 뒤에 바꾼다
+    openDetail(key);
+    setTimeout(() => selectDate(key), 300);
+  } else {
+    openDay(key);
+  }
 });
 
 function openDay(key) {
@@ -769,6 +776,70 @@ $('clear-day').addEventListener('click', () => {
 
 /* ---------- 일기 목록 ---------- */
 
+// 하루 기록 내용(스파링·기술·메모·사진·영상). 일기 목록과 달력 팝업이 같이 쓴다.
+// 팝업 아래쪽: 메모·사진·영상 (수업·스파링·기술은 날짜 아래 한 줄에 따로 보인다)
+function entryBodyHtml(e) {
+  return `${e.memo.trim() ? `<p class="memo-text">${esc(e.memo)}</p>` : ''}
+      ${(e.photos || []).length ? `<div class="photos small">${e.photos.map((p) => `<figure class="photo"><img src="${esc(photoSrc(p))}" alt="" loading="lazy" data-zoom></figure>`).join('')}</div>` : ''}
+      ${(e.videos || []).length ? `<ul class="video-list">${e.videos.map((v) => `<li><a href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="play">▶</span><span class="v-text"><b>${esc(v.label)}</b><small>${esc(videoLabel(v.url))}</small></span></a></li>`).join('')}</ul>` : ''}`;
+}
+
+/* ---------- 달력 팝업: 기록한 날 내용 보기 ---------- */
+
+function openDetail(key) {
+  const e = getEntry(key);
+  const d = fromKey(key);
+  const holiday = holidayName(key);
+  $('ds-title').textContent = `${d.getMonth() + 1}월 ${d.getDate()}일 (${WEEK[d.getDay()]})${holiday ? ` · ${holiday}` : ''}`;
+  // 날짜 아래 한 줄: 수업 · 스파링 · 기술(분류 + 이름)
+  const map = techMap();
+  $('ds-pills').innerHTML = [
+    ...e.sessions.map((s) => `<span class="pill" style="--c:${sessionColor(s)};--ci:${sessionInk(s)}">${esc(s)}</span>`),
+    e.rolls ? `<span class="pill info-pill">스파링 <b>${e.rolls}</b>회</span>` : '',
+    ...e.techs.map((id) => map.get(id)).filter(Boolean)
+      .map((t) => `<span class="pill tech-pill"><small>${esc(t.cat)}</small> ${esc(t.name)}</span>`),
+  ].join('');
+  $('ds-body').innerHTML = entryBodyHtml(e).trim() || (e.sessions.length || e.rolls || e.techs.length ? '' : '<p class="empty-state">아직 적은 내용이 없어요.</p>');
+  $('ds-edit').dataset.key = key;
+  openSheet($('day-sheet'));
+}
+
+$('ds-edit').addEventListener('click', () => {
+  const key = $('ds-edit').dataset.key;
+  closeSheet($('day-sheet'), () => openDay(key));
+});
+$('ds-close').addEventListener('click', () => closeSheet($('day-sheet')));
+$('day-sheet').addEventListener('click', (ev) => {
+  if (ev.target === $('day-sheet') || ev.target.classList.contains('sheet-wrap')) closeSheet($('day-sheet'));
+});
+
+// 사진을 누르면 크게 보기 (일기 목록·팝업 공통)
+document.addEventListener('click', (ev) => {
+  const img = ev.target.closest('img[data-zoom]');
+  if (!img) return;
+  $('lightbox-img').src = img.src;
+  $('lightbox').hidden = false;
+});
+
+// 아래에서 올라오는 창 열고 닫기 (닫을 때는 내려가는 모션이 끝난 뒤 숨긴다)
+function openSheet(el) {
+  clearTimeout(el._closeTimer);
+  el.classList.remove('closing');
+  el.hidden = false;
+  document.body.classList.add('sheet-open');
+}
+
+function closeSheet(el, after) {
+  el.classList.add('closing');
+  clearTimeout(el._closeTimer);
+  el._closeTimer = setTimeout(() => {
+    el.hidden = true;
+    el.classList.remove('closing');
+    document.body.classList.remove('sheet-open');
+    if (after) after();
+  }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 240);
+}
+
 function renderDiary() {
   const map = techMap();
   const q = norm($('diary-search').value.trim());
@@ -784,33 +855,48 @@ function renderDiary() {
     return;
   }
 
-  const tones = ['pink', 'lime', 'sky', 'mint'];
-  $('diary-list').innerHTML = keys.map((k, i) => {
+  // 날짜는 카드 왼쪽 바깥에, 카드는 모두 같은 높이(제목·부제·아래 줄)로. 달이 바뀌면 달 제목을 넣는다.
+  const BELT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h18v4H3z"/><path d="M10 9.5h4v5h-4z"/><path d="M11 14.5l-2.5 5M13 14.5l2.5 5"/></svg>';
+  let lastMonth = '';
+  $('diary-list').innerHTML = keys.map((k) => {
     const e = data.entries[k];
-    const pills = e.sessions.map((s) => `<span class="pill" style="--c:${sessionColor(s)};--ci:${sessionInk(s)}">${esc(s)}</span>`).join('');
-    const techs = e.techs.map((id) => map.get(id)).filter(Boolean)
-      .map((t) => `<span class="chip tech"><small>${esc(t.cat)}</small>${esc(t.name)}</span>`).join('');
     const d = fromKey(k);
-    return `<article class="card tab ${tones[i % tones.length]}">
-      <div class="entry-head">
-        <span class="badge"><b>${d.getDate()}</b><small>${WEEK[d.getDay()]}</small></span>
-        <div class="when"><b>${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일</b>${pills ? `<div class="pills">${pills}</div>` : ''}</div>
-        <button type="button" class="pill-btn" data-open="${k}">편집</button>
-      </div>
-      ${e.rolls ? `<p class="rolls-line">스파링 <b>${e.rolls}</b>회</p>` : ''}
-      ${techs ? `<div class="chips">${techs}</div>` : ''}
-      ${e.memo.trim() ? `<p>${esc(e.memo)}</p>` : ''}
-      ${(e.photos || []).length ? `<div class="photos small">${e.photos.map((p) => `<figure class="photo"><img src="${esc(photoSrc(p))}" alt="" loading="lazy"></figure>`).join('')}</div>` : ''}
-      ${(e.videos || []).length ? `<ul class="video-list">${e.videos.map((v) => `<li><a href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="play">▶</span><span class="v-text"><b>${esc(v.label)}</b><small>${esc(videoLabel(v.url))}</small></span></a></li>`).join('')}</ul>` : ''}
-    </article>`;
+    const month = k.slice(0, 7);
+    const monthHead = month !== lastMonth ? `<h3 class="dl-month">${d.getFullYear()}년 ${d.getMonth() + 1}월</h3>` : '';
+    lastMonth = month;
+    const names = e.techs.map((id) => map.get(id)?.name).filter(Boolean);
+    const memoLine = e.memo.trim().split('\n')[0];
+    // 한 줄 정보: 스파링·사진·영상 → 기술 (들은 수업은 앞의 띠 아이콘 색으로 보인다)
+    const tags = [
+      e.rolls ? `<span class="pill info-pill">스파링 <b>${e.rolls}</b>회</span>` : '',
+      (e.photos || []).length ? `<span class="pill info-pill">사진 <b>${e.photos.length}</b>장</span>` : '',
+      (e.videos || []).length ? `<span class="pill info-pill">영상 <b>${e.videos.length}</b>개</span>` : '',
+      ...names.map((n) => `<span class="pill tech-pill">${esc(n)}</span>`),
+    ].join('');
+    const holiday = holidayName(k);
+    return `${monthHead}<div class="diary-row">
+      <div class="dr-date${d.getDay() === 0 || holiday ? ' red' : ''}"><b>${d.getDate()}</b><span>${WEEK[d.getDay()]}</span></div>
+      <article class="diary-card" data-open="${k}" role="button" tabindex="0" aria-label="${fullLabel(k)} 기록 보기">
+        <span class="dc-icon${e.sessions.length ? ' on' : ''}" style="--fill:${circleFill(e)}">${BELT_ICON}</span>
+        ${memoLine ? `<b class="dc-title">${esc(memoLine)}</b>` : ''}
+        <div class="pills">${tags}</div>
+      </article>
+    </div>`;
   }).join('');
 }
 
 $('diary-search').addEventListener('input', renderDiary);
 $('diary-list').addEventListener('click', (ev) => {
-  const btn = ev.target.closest('[data-open]');
-  if (!btn) return;
-  openDay(btn.dataset.open);
+  const card = ev.target.closest('[data-open]');
+  if (!card) return;
+  openDetail(card.dataset.open);
+});
+$('diary-list').addEventListener('keydown', (ev) => {
+  const card = ev.target.closest('[data-open]');
+  if (card && (ev.key === 'Enter' || ev.key === ' ')) {
+    ev.preventDefault();
+    openDetail(card.dataset.open);
+  }
 });
 
 /* ---------- 통계 ---------- */
@@ -1005,7 +1091,9 @@ $('settings-sheet').addEventListener('click', (ev) => {
   if (ev.target === $('settings-sheet') || ev.target.classList.contains('sheet-wrap')) closeSettings();
 });
 document.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Escape' && !$('settings-sheet').hidden) closeSettings();
+  if (ev.key !== 'Escape') return;
+  if (!$('settings-sheet').hidden) closeSettings();
+  if (!$('day-sheet').hidden) closeSheet($('day-sheet'));
 });
 
 $('bp-colors').parentElement.addEventListener('click', (ev) => {
