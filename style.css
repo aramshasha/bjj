@@ -2,11 +2,11 @@
 :root {
   --navy: #111113;           /* 글자·버튼 (잉크) */
   --navy-2: #2a2a2e;
-  --bg: #c6c6cb;             /* 회색 바탕 */
+  --bg: #efefef;             /* 밝은 회색 바탕 */
   --lime: #2f6df6;           /* 파랑 (메인 강조색) */
   --on-lime: #ffffff;        /* 파랑 위 글자 */
   --mint: #dcdce0;           /* 밝은 회색 타일 */
-  --pink: #f7f7f8;           /* 흰 타일 */
+  --pink: #ffffff;           /* 흰 타일 (밝은 바탕 위에서 구분되게 순백) */
   --sky: #dcdce0;
   --white: #ffffff;
   --glass: rgba(255, 255, 255, 0.7);
